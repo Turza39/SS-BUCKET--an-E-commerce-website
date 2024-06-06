@@ -1,0 +1,44 @@
+.bdy{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.box{
+    position: absolute;
+    margin-top: 27px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f6d6f3;
+    height: 25px;
+    border-radius: 25px;
+    padding: 10px;
+    box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.3);
+
+}
+.box:hover > .textBox{
+    width: 500px;
+}
+.box:hover > .searchIcon{
+    cursor: pointer;
+}
+.box .searchIcon{
+    float: right;
+}
+.textBox{
+    border: none;
+    background: none;
+    outline: none;
+    float: left;
+    padding: 0;
+    color: white;
+    font-size: 16px;
+    transition: 0.4s;
+    line-height: 25px;
+    width: 0px;
+    color: purple;
+
+}
+
+/* #f6d6f3; */

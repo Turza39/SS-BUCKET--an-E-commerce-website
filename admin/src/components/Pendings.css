@@ -1,0 +1,12 @@
+.product-item .delivered{
+    background: rgb(97, 231, 97);
+    height: 30px;
+    width: 150px;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px rgb(130, 130, 130);
+    cursor: pointer;
+}
+.product-item .delivered:hover{
+    box-shadow: 2px 2px 2px rgb(130, 130, 130);
+}

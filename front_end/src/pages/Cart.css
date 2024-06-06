@@ -1,0 +1,45 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.announcement{
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 50px;
+    font-size: 25px; 
+}
+.announcement b{
+    text-align: center;
+    background-image: linear-gradient(45deg, #f6a2bd, #1D2671);
+    background-clip: text;
+    color: transparent;
+}
+
+.together{
+    display: flex;
+    justify-content:space-between;
+    width: 90%;
+}
+.secondLine{
+    display: flex;
+    background: #000;
+    color: white;
+    border-radius: 10px;
+    width: 370px;
+    height: 500px;
+}
+.firstLine .txt{
+    width: 800px;
+    height: 40px;
+    border-radius: 5px;
+    background: #f7c9f6ee;
+    text-align: center;
+    padding-top: 15px;
+    padding-left: 8px;
+    font-weight: bold;
+    font-size: 20px;
+}

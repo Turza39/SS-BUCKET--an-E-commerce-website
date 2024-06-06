@@ -1,0 +1,100 @@
+.productDetailsContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+.productDetailsContainer .boundary{
+    padding: 30px;
+    height: 500px;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 10px 10px 10px #808080;
+    background: #e0dada;
+}
+ .productDetailsContainer .boundary .product{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 0;
+    background: white;
+}
+.productDetailsContainer .boundary .product .images{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.productDetailsContainer .boundary .product .images .bigImage{
+    height: 80%;
+    width: 50%;
+}
+.productDetailsContainer .boundary .product .images .bigImage img{
+    height: 80%;
+    width: 80%;
+    object-fit: contain;
+}
+.productDetailsContainer .boundary .product .images .description{
+    font-size: 16px;
+    font-weight: bold;
+}
+.productDetailsContainer .boundary .product .images .description .price{
+    font-size: 40px;
+    padding-bottom: 20px;
+}
+.productDetailsContainer .boundary .product .images .description .dlvry{
+    border: 2px solid black;
+    border-radius: 25px;
+    padding: 10px;
+
+}
+.productDetailsContainer .boundary .product .images .description .btns{
+    display: flex;
+    gap: 3px;
+    cursor: pointer;
+}
+.productDetailsContainer .boundary .product .images .description .btns .quantity{
+    display: flex;
+    gap: 10px;
+}
+.productDetailsContainer .boundary .product .images .description .btns .quantity button{
+    width: 40px;
+    border: 2px solid black;
+    text-align: center;
+    font-size: 22px;
+    cursor: pointer;
+}
+.productDetailsContainer .boundary .product .images .description .btns .order{
+    width: 100px;
+    border: 2px solid black;
+    text-align: center;
+    background: black;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+}
+/*.boundary .product .images{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.boundary .product .images .bigImage img{
+    height: 80%;
+    width: 50%;
+    object-fit: contain;
+}
+.boundary .product .description{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.boundary .product .smallImage{
+    display: flex;
+    justify-content: space-evenly;
+} */

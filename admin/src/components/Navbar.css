@@ -1,0 +1,21 @@
+.navbarContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: #e2e3e4;
+    padding: 10px;
+}
+.navbarContainer .nav{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.navbarContainer .nav hr{
+    height: 2px;
+    background: rgb(105, 105, 253);
+}

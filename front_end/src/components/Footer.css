@@ -1,0 +1,30 @@
+.footer{
+    display: flex;
+    justify-content: space-around;
+    background: #f4c1d1;
+    font-size: 15px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+.contact{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.contact a{
+    padding: 5px;
+}
+.contact p{
+    font-size: 20px;
+}
+.terms{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.terms a{
+    padding: 10px;
+    cursor: pointer;
+}

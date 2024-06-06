@@ -1,0 +1,54 @@
+.container{
+    display: flex;
+    justify-content: end;
+}
+.sortFilterBox{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: start;
+    width: 500px;
+}
+.sort-filter-icons img{
+    padding: 5px;
+}
+.sort-filter-icons img:hover{
+    cursor: pointer;
+}
+.filterBox{
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    z-index: 10;
+    margin-top: 50px;
+    background: linear-gradient(45deg, #f6a2bd, #1D2671);
+    padding: 20px;
+    color: white;
+    border-radius: 5px;
+}
+@keyframes appear {
+    from{
+        width: 0px;
+    }to{
+        width: 300px;
+    }
+}
+.filterBox:not(.visible){
+    animation: appear 0.5s backwards;
+}
+.filterBox .brand{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+#min, #max{
+    width: 50px;
+}
+.filter-submit{
+    border: none;
+    border-radius: 2px;
+    height: 24px;
+    background: rgb(251, 211, 251);
+    cursor: pointer;
+}

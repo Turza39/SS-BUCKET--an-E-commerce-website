@@ -1,0 +1,58 @@
+.search-boxes {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+  
+.search-boxes input {
+    padding: 10px;
+    font-size: 16px;
+    margin: 0 10px;
+    width: 200px;
+}
+  
+.product-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product-item{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 500px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+.product-item .details{
+    padding: 10px;
+    text-align: left;
+}
+
+.product-item p {
+    margin: 5px 0;
+}
+.product-item .btns{
+    display: flex;
+    gap: 20px;
+}
+.product-item .btns button{
+    background: rgb(97, 231, 97);
+    border: none;
+    border-radius: 3px;
+    height: 30px;
+    width: 60px;
+    box-shadow: 1px 1px 1px rgb(130, 130, 130);
+    cursor: pointer;
+}
+.product-item .btns button:hover{
+    box-shadow: 2px 2px 2px rgb(130, 130, 130);
+}
+.product-item .btns .edit{
+    background: rgb(97, 231, 97);
+}
+.product-item .btns .delete{
+    background: rgb(254, 74, 74);
+}
+  

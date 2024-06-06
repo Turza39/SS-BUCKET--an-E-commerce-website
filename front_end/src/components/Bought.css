@@ -1,0 +1,38 @@
+.profileOrders{
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    /* border: .5px solid black; */
+}
+.profileOrders .my{
+    font-size: 26px;
+    font-weight: bold;
+}
+.profileOrders .colam{
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+.profileOrders .profileBox{
+    border: .5px solid black;
+    border-radius: 5px;
+    width: 80%;
+    padding: 5px;
+    height: max-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profileOrders .profileBox .profileBoxDetails{
+    display: flex;
+    justify-content: space-between;
+}
+.profileOrders .profileBox .profileBoxBtns{
+    display: flex;
+    justify-content: space-evenly;
+}
