@@ -10,7 +10,9 @@ const Home = () => {
       <BigScreen /> <br /> <br /><br />
       <h1 style={{textAlign: 'center', fontFamily:'Arial, sans-serif'}}>Our Products</h1>
       <hr style={{height: '5px'}}/>
-      <Products category='laptop' /> <br />
+      <Products category='Laptop' /> <br />
+      <Products category='Phone' /> <br />
+      <Products category='Headphone' /> <br />
     </div>
   )
 }

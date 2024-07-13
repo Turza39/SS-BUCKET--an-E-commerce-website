@@ -39,86 +39,30 @@ mongoose.connect("mongodb://localhost:27017/E-commerce")
 // Schema model for product details
 
 const ProductSchema = mongoose.Schema({
-    id: {
-        type: Number,
-        required: false
-    },
-    brand: {
-        type: String,
-        required: true
-    },
-    image: {
-        type: String,
-        default: ''
-    },
-    category: {
-        type: String,
-        required: true
-    },
-    new_price: {
-        type: Number,
-        required: true
-    },
-    old_price: {
-        type: Number,
-        required: true
-    },
-    model: {
-        type: String,
-        required: true
-    },
-    quantity: {
-        type: Number,
-        required: true
-    },
-    date: {
-        type: Date,
-        default: Date.now
-    },
-    available: {
-        type: Boolean,
-        default: true
-    }
+    id: { type: Number, required: false },
+    brand: { type: String, required: true },
+    image: { type: String, default: '' },
+    category: { type: String, required: true },
+    new_price: { type: Number, required: true },
+    old_price: { type: Number, required: true },
+    model: { type: String, required: true },
+    quantity: { type: Number, required: true },
+    date: { type: Date, default: Date.now },
+    available: { type: Boolean, default: true }
 })
 const Product = mongoose.model("product", ProductSchema)
 
 // Schema model for users
 
 const userSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String,
-        requied: true
-    },
-    email: {
-        type: String,
-        required: false
-    },
-    phone: {
-        type: String,
-        required: true
-    },
-    cart: {
-        type: [ProductSchema],
-        required: false,
-        default: null
-    },
-    history: {
-        type: [ProductSchema],
-        required: false,
-        default: null
-    }
+    name: { type: String, required: true },
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    address: { type: String, requied: true },
+    email: { type: String, required: false },
+    phone: { type: String, required: true },
+    cart: { type: [ProductSchema], required: false, default: null },
+    history: { type: [ProductSchema], required: false, default: null }
 })
 const users = mongoose.model("users", userSchema)
 
@@ -167,7 +111,7 @@ app.post('/signup/login', async (req, res) => {
                     console.log("Error creating jwt.", err);
                     res.status(500).json({ error: 'Internal server error' });
                 } else {
-                    res.json({"userid": user.id, "token": token });
+                    res.json({ "userid": user.id, "token": token });
                 }
             })
             // res.send({status: "true"});
@@ -181,7 +125,7 @@ app.post('/signup/login', async (req, res) => {
 
 // api for profile 
 app.get('/user/profile', authenticateToken, async (req, res) => {
-    const user = await users.findOne({ username: req.user.username });
+    const user = await users.findOne({ userid: req.user.userid });
     if (!user) {
         return res.status(404).json({ message: 'User not found' });
     }
@@ -257,6 +201,87 @@ app.put('/editItem/:id', async (req, res) => {
     }
 })
 
+const orderSchema = mongoose.Schema({
+    brand: { type: String, required: true },
+    model: { type: String, required: true, },
+    price: { type: Number, required: true },
+    address: { type: String, required: true, },
+    phone: { type: String, required: true, },
+    discount: { type: Number, },
+    total: { type: Number, required: true, },
+    clientId: { type: String, required: true },
+    clientName: { type: String, }
+})
+const orders = mongoose.model('orders', orderSchema)
+
+// api to place order 
+app.post("/orders", async (req, res) => {
+    const order = new orders(req.body);
+    console.log(order);
+    try {
+        await order.save();
+        res.send(true);
+    } catch (error) {
+        res.send(error)
+    }
+})
+
+// api to get all orders 
+app.get("/getorders", async (req, res) => {
+    try {
+        const allOrders = await orders.find({});
+        res.send(allOrders);
+    } catch (error) {
+        res.send(error);
+    }
+})
+
+// api to delete pending item 
+app.delete("/delivered", async (req, res) => {
+    try {
+        const orderId = req.query._id;
+        await orders.findByIdAndDelete(orderId);
+        res.send(true);
+    } catch (error) {
+        res.send(false);
+    }
+});
+
+// schema for sale's history 
+const salesSchema = mongoose.Schema({
+    brand: { type: String, required: true },
+    model: { type: String, required: true, },
+    price: { type: Number, required: true },
+    address: { type: String, required: true, },
+    phone: { type: String, required: true, },
+    discount: { type: Number, },
+    total: { type: Number, required: true, },
+    clientId: { type: String, required: true },
+    clientName: { type: String, }
+})
+const sales = mongoose.model('sales', salesSchema)
+
+// api to add to sale's history 
+app.post("/saleshistory", async(req, res)=>{
+    try{
+        const newSale = new sales(req.body);
+        await newSale.save();
+        res.send(true);
+    }catch(error){
+        res.send(false)
+    }
+})
+
+// api to get sales history 
+app.get("/saleshistory", async (req, res) => {
+    try {
+        const allSales = await sales.find({});
+        res.send(allSales);
+    } catch (error) {
+        res.send(error);
+    }
+})
+
 // cart schema 
 const cartSchema = mongoose.Schema({
     userid: {
@@ -275,37 +300,34 @@ app.post('/cart', async (req, res) => {
     const { userid, item } = req.body;
     console.log(userid, item);
     if (!userid || !item) {
-      return res.status(400).send('Missing userId or product data');
+        return res.status(400).send('Missing userId or product data');
     }
-  
+
     try {
-      // Find the cart for the user
-      const cart = await carts.findOne({ userid });
-  
-      if (!cart) {
-        // Create a new cart if it doesn't exist
-        const newCart = new carts({ userid, item: item });
-        await newCart.save();
-        return res.status(201).send('Product added to new cart');
-      }
-  
-      const existingProduct = cart.item.find(items => items.id === item.id);
-  
-      if (existingProduct) {
-        return res.status(409).send('Product already exists in cart');
-      }
-  
-      // Update the existing cart with the new product
-      cart.item.push(item);
-      await cart.save();
-  
-      res.status(200).send('Product added to existing cart');
+        const cart = await carts.findOne({ userid });
+
+        if (!cart) {
+            const newCart = new carts({ userid, item: item });
+            await newCart.save();
+            return res.status(201).send('Product added to new cart');
+        }
+
+        const existingProduct = cart.item.find(items => items.id === item.id);
+
+        if (existingProduct) {
+            return res.status(409).send('Product already exists in cart');
+        }
+
+        cart.item.push(item);
+        await cart.save();
+
+        res.status(200).send('Product added to existing cart');
     } catch (err) {
-      console.error(err);
-      res.status(500).send('Internal server error');
+        console.error(err);
+        res.status(500).send('Internal server error');
     }
-  });
-  
+});
+
 
 app.listen(port, (error) => {
     if (!error) {

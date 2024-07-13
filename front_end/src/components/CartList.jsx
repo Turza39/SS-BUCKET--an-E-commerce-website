@@ -13,12 +13,6 @@ const CartList = (props) => {
   return (
     <div className='cartList'>
         {
-            // cartList.map((item, index)=>(
-            //     <SingleCartItem selectedItem={props.selectedItem}
-            //     clickHandle={props.clickHandle} item={item}
-            //     key={index} img={item.image} model={item.model}
-            //     brand={item.brand} price={item.price}/>
-            // ))
             cartList.map((item, index)=>(
                 <SingleCartItem key= {index} selectedItem={props.selectedItem} selectItem={props.selectItem}
                 currentItem={item} />

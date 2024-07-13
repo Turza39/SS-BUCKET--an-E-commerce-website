@@ -1,13 +1,34 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import './Pendings.css'
+import axios from 'axios'
 
 const Pendings = () => {
-  const pendingProducts = [
-    { brand: 'Apple', model: 'iPhone 13', price: 200, quantity: 2, address: 'akhalia' },
-    {brand: 'Samsung', model: 'Galaxy S21', price: 200, quantity: 2, address: 'akhalia' },
-    {brand: 'Google', model: 'Pixel 6', price: 200, quantity: 2, address: 'akhalia' },
-    {brand: 'OnePlus', model: '9 Pro', price: 200, quantity: 2, address: 'akhalia' },
-  ];
+  const [pendingProducts, setpendingProducts] = useState({})
+  useEffect(()=>{
+    const fetchOrders = async ()=>{
+      try{
+        const response = await axios.get('http://localhost:4000/getorders');
+        // console.log(response.data);  
+        setpendingProducts(response.data);
+      }catch(error){
+
+      }
+    }
+    fetchOrders();
+  }, [])
+
+  const handleDelivery = async (e) => {
+    const item = e;
+    try {
+        const response = await axios.delete('http://localhost:4000/delivered', {
+            params: { _id: item._id }
+        });
+        await axios.post('http://localhost:4000/saleshistory', item)
+    } catch (error) {
+        window.alert("Something went wrong");
+    }
+}
+
 
   return (
     <div>
@@ -22,8 +43,9 @@ const Pendings = () => {
                   <p>Model: {item.model}</p>
                   <p>Price: {item.price}</p>
                   <p>Address: {item.address}</p>
+                  <p>Client's phone: {item.phone}</p>
                 </div>
-                <button className='delivered'>Mark as Delivered</button>
+                <button onClick={()=>{handleDelivery(item)}} className='delivered'>Mark as Delivered</button>
             </div>
           </div>
   ))

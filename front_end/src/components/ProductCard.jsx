@@ -1,6 +1,6 @@
 import React from 'react'
 import './ProductCard.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductCard = (props) => {
@@ -15,6 +15,7 @@ const ProductCard = (props) => {
 
     }
   }
+  
   const encodedItem = encodeURIComponent(JSON.stringify(props.item));
   return (
     <div>
@@ -28,7 +29,7 @@ const ProductCard = (props) => {
       </Link>
         <div className="buttons">
             <button onClick={()=>{cartHandle(props.item)}} className='addCart'><b>Add to cart</b></button>
-            <button className='buy'><b>Buy now</b></button>
+            <button className='buy'><Link style={{textDecoration: "none"}} to={`/productDetails/${encodedItem}`}><b>Buy now</b></Link></button>
         </div>
       </div>
     </div>

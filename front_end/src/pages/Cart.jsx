@@ -23,7 +23,7 @@ const Cart = () => {
           <CartList selectedItem={selectedItem} selectItem={selectItem}/>
         </div>
         <div className="secondLine">
-          <Summary selectedItem={selectedItem}/>
+        {selectItem!==null && <Summary selectedItem={selectedItem}/>}  
         </div>
       </div>
     </div>

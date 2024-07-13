@@ -9,7 +9,7 @@ const SingleCartItem = (props) => {
         <p>
             <b>Brand: </b> {props.currentItem.brand} <br />
             <b>Model: </b> {props.currentItem.model} <br />
-            <b>Price: </b> {props.currentItem.price} <br />
+            <b>Price: </b> {props.currentItem.new_price} <br />
         </p>
         <div className="btn">
           <div className="remove"><button className='remove'><b>Remove</b></button></div>  
