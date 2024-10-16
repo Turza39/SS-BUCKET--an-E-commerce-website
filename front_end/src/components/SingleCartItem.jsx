@@ -8,7 +8,7 @@ const SingleCartItem = (props) => {
     <div className="desc-btn">
         <p>
             <b>Brand: </b> {props.currentItem.brand} <br />
-            <b>Model: </b> {props.currentItem.model} <br />
+            <b>Model: </b> {props.currentItem.name} <br />
             <b>Price: </b> {props.currentItem.new_price} <br />
         </p>
         <div className="btn">

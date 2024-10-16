@@ -32,14 +32,11 @@
     width: 370px;
     height: 500px;
 }
-.firstLine .txt{
-    width: 800px;
-    height: 40px;
-    border-radius: 5px;
+.firstLine{
+    width: 100%;
     background: #f7c9f6ee;
+    padding: 10px;
     text-align: center;
-    padding-top: 15px;
-    padding-left: 8px;
     font-weight: bold;
     font-size: 20px;
 }

@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
 import './DashBoard.css'
 import AddProduct from './AddProduct'
+import {Link} from 'react-scroll'
+
 
 const DashBoard = () => {
     const [add, setadd] = useState(false)
@@ -29,10 +31,14 @@ const DashBoard = () => {
             <h1>5</h1>
             <p>Items are out of stock. <u>Review</u> </p>
         </div>
-        <div className="dashes" onClick={()=>{addProduct(add)}}>
-            <p>Add new items in your stock</p>
-        </div>
-        {add && <AddProduct addProduct={addProduct} add = {add}/>}        
+        {/* <div  className="dashes" onClick={()=>{addProduct(add)}}> */}
+            <nav className="dashes" onClick={()=>{addProduct(add)}}>
+            <Link  to='add-component' smooth={true} duration={500}>
+                <p>Add new items in your stock</p>
+            </Link>
+        </nav>
+        {/* </div> */}
+            {add && <div id="add-component"> <AddProduct addProduct={addProduct} add = {add}/></div>}        
     </div>
   )
 }

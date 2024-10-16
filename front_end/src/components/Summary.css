@@ -1,14 +1,24 @@
+.summary-outer-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.summary-container{
+    width: 70%;
+    margin: 30px;
+    padding: 40px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .2)
+}
 .details{
     display: flex;
     flex-direction: column;
     padding: 20px;
 }
-.smry{
+.text{
     text-align: center;
     font-size: 25px;
 }
 .dtls{
-    width: 300px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -22,15 +32,14 @@
     gap: 8px;
 }
 .order button{
-    height: 30px;
-    width: 90%;
+    height: 50px;
+    width: 100%;
     cursor: pointer;
-    border-radius: 5px;
     color: black;
-    background: rgb(253, 223, 253);
+    background: rgb(126, 126, 252);
     border: none;
     font-size: 18px;
 }
 .order button:hover{
-    box-shadow: 0 0 20px rgba(253, 223, 253, 0.7), 0 0 30px rgba(98, 0, 234, 0.7), 0 0 40px rgba(253, 223, 253, 0.7);
+    box-shadow: 0 0 4px rgb(79, 79, 251);
 }

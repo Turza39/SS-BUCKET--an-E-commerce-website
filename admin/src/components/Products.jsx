@@ -9,7 +9,7 @@ const Products = () => {
     try{
       const response = await axios.get("http://localhost:4000/allproducts");
       setData(response.data);
-      console.log({ data });
+      console.log(data);
     }catch(error){
       console.log(error);
     }
@@ -52,7 +52,7 @@ const Products = () => {
   }
   const filteredProducts = data.filter(product =>
     product?.brand?.toLowerCase().includes(brandFilter.toLowerCase()) &&
-    product?.model?.toLowerCase().includes(modelFilter.toLowerCase()) &&
+    product?.name?.toLowerCase().includes(modelFilter.toLowerCase()) &&
     product?.category?.toLowerCase().includes(typeFilter.toLowerCase())
   );
 
@@ -85,13 +85,13 @@ const Products = () => {
             <div key={index} className="product-item">
               <div className="details">
                 <p>ID: {product.id}</p>
-                <p>Type: {product.category} </p>
+                <p>Category: {product.category} </p>
                 <p>Brand: {product.brand}</p>
-                <p>Model: {product.model}</p>
+                <p>Model: {product.name}</p>
               </div>
               <div className='btns'>
                 <button onClick={() => { handleEdit(product); fech() }} className='edit'>Edit</button>
-                <button onClick={()=>{handleDelete(product)}} className='delete'>Delete</button>
+                <button onClick={()=> {handleDelete(product)}} className='delete'>Delete</button>
               </div>
             </div>
           ))

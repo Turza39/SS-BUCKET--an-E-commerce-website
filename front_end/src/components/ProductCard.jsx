@@ -24,7 +24,7 @@ const ProductCard = (props) => {
       <Link className='link' style={{textDecoration: 'none', color: 'black', fontWeight: 'bold'}} to={`/productDetails/${encodedItem}`}>
         <img src={props.item.image} alt="" />
         <p className='brand'>Brand: {props.item.brand}</p>
-        <p className='model'>Model: {props.item.model}</p>
+        <p className='model'>Model: {props.item.name}</p>
         <p className='price'>Price: <s>${props.item.old_price}</s> ${props.item.new_price}</p>
       </Link>
         <div className="buttons">

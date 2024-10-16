@@ -1,4 +1,4 @@
-.addProductContainer{
+/* .addProductContainer{
     position: absolute;
     box-sizing: border-box;
     width: 100%;
@@ -30,7 +30,6 @@
 }
 .addProductContainer .form button{
     height: 30px;
-    /* border: none; */
     padding: 6px;
     border-radius: 4px;
     background: rgb(93, 245, 93);
@@ -54,4 +53,47 @@
 .addProductContainer .image .cross{
     margin-bottom: 70px;
     cursor: pointer;
+} */
+
+.add-product{
+    width: 100%;
+    max-width: 800px;
+    padding: 30px 50px;
+    margin: 20px 30px;
+    border-radius: 6px;
+    background: #bebfc0;
+}
+.add-product .cross{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+.addProduct-itemField{
+    width: 100%;
+    color: black;
+    font-size: 16px;
+}
+.addProduct-itemField p{
+    font-weight: bold;
+    font-size: 18px;
+}
+.addProduct-itemField input{
+    box-sizing: border-box;
+    width: 100%;
+    height: 50px;
+    border-radius: 4px;
+    padding-left: 15px;
+    border: 1px solid #c3c3c3;
+    outline: none;
+    color: #7b7b7b;
+    font-family: 'Poppins';
+    font-size: 14px;
+}
+
+.addProduct_thumbnail_img{
+    height: 120px;
+    width: 120px;
+    border-radius: 10px;
+    object-fit: contain;
+    margin: 10px 0px;
 }

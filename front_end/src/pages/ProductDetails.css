@@ -112,14 +112,14 @@
 .productDisplay-left-img-list{
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 13px;
 }
 .productDisplay-left-img-list img{
-    height: 163px;
+    height: 140px;
 }
 .productDisplay-main-img{
     width: 586px;
-    height: 700px;
+    height: 600px;
 }
 .productDisplay-right{
     margin: 0px 70px;

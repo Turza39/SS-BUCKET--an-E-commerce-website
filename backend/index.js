@@ -45,8 +45,9 @@ const ProductSchema = mongoose.Schema({
     category: { type: String, required: true },
     new_price: { type: Number, required: true },
     old_price: { type: Number, required: true },
-    model: { type: String, required: true },
+    name: { type: String, required: true },
     quantity: { type: Number, required: true },
+    description: {type: String, required: true},
     date: { type: Date, default: Date.now },
     available: { type: Boolean, default: true }
 })
@@ -151,8 +152,9 @@ app.post("/addproduct", async (req, res) => {
         category: req.body.category,
         new_price: req.body.new_price,
         old_price: req.body.old_price,
-        model: req.body.model,
-        quantity: req.body.quantity
+        description: req.body.description,
+        quantity: req.body.quantity,
+        name: req.body.name
     });
     console.log(product);
     await product.save();
@@ -179,7 +181,7 @@ app.delete('/deleteItem/:id', async (req, res) => {
 app.get("/allproducts", async (req, res) => {
     try {
         let allProducts = await Product.find({});
-        console.log("All product fetched");
+        console.log("All products fetched")
         res.json(allProducts);
     } catch (error) {
         res.send(error);
@@ -203,7 +205,7 @@ app.put('/editItem/:id', async (req, res) => {
 
 const orderSchema = mongoose.Schema({
     brand: { type: String, required: true },
-    model: { type: String, required: true, },
+    name: { type: String, required: true, },
     price: { type: Number, required: true },
     address: { type: String, required: true, },
     phone: { type: String, required: true, },
@@ -217,7 +219,7 @@ const orders = mongoose.model('orders', orderSchema)
 // api to place order 
 app.post("/orders", async (req, res) => {
     const order = new orders(req.body);
-    console.log(order);
+    // console.log(order);
     try {
         await order.save();
         res.send(true);
@@ -250,7 +252,7 @@ app.delete("/delivered", async (req, res) => {
 // schema for sale's history 
 const salesSchema = mongoose.Schema({
     brand: { type: String, required: true },
-    model: { type: String, required: true, },
+    name: { type: String, required: true, },
     price: { type: Number, required: true },
     address: { type: String, required: true, },
     phone: { type: String, required: true, },
@@ -327,6 +329,23 @@ app.post('/cart', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+
+// api to fetch cart items
+app.get('/cart/:userid', async (req, res) => {
+    try {
+      const { userid } = req.params;
+      console.log(userid);
+      const cart = await carts.findOne({ userid });
+      console.log(cart);
+      if (!cart) {
+        return res.status(404).json({ message: 'Cart not found for this user' });
+      }
+  
+      res.status(200).json(cart.item);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching cart', error: error.message });
+    }
+  });
 
 
 app.listen(port, (error) => {

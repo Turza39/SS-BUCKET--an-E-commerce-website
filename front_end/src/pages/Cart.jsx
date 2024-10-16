@@ -1,10 +1,16 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CartList from '../components/CartList';
 import Summary from '../components/Summary';
 import './Cart.css'
 
 const Cart = () => {
+  
+  const token = localStorage.getItem('token');
+  useEffect(()=>{
+  const token = localStorage.getItem('token');
+  }, token)
+
   const [selectedItem, setselectedItem] = useState(null)
   const selectItem = (item)=>{
     setselectedItem(item);
@@ -17,15 +23,16 @@ const Cart = () => {
           *Terms and conditions applies.* </b>
         </marquee>
       </div>
+      {token!==null? 
       <div className='together'>
         <div className="firstLine">
-          <p className='txt'>YOUR CART</p>
+          <div className='txt'>YOUR CART</div>
           <CartList selectedItem={selectedItem} selectItem={selectItem}/>
         </div>
-        <div className="secondLine">
+        {/* <div className="secondLine">
         {selectItem!==null && <Summary selectedItem={selectedItem}/>}  
-        </div>
-      </div>
+        </div> */}
+      </div>: <h2>Please login to see your cart.</h2>}
     </div>
   )
 }

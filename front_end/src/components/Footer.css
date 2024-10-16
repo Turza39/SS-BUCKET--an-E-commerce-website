@@ -1,7 +1,10 @@
 .footer{
+    bottom: 0px;
+    width: 100%;
+    color: white;
     display: flex;
     justify-content: space-around;
-    background: #f4c1d1;
+    background: rgb(86, 31, 168);
     font-size: 15px;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
