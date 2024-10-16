@@ -1,2 +1,2 @@
-# practice_app2
+# SS Bucket
  Developed an E-commerce-website using MERN stack
