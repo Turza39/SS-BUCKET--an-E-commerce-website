@@ -299,8 +299,7 @@ const carts = mongoose.model('carts', cartSchema)
 
 // api to add to cart 
 app.post('/cart', async (req, res) => {
-    const { userid, item } = req.body;
-    console.log(userid, item);
+    const { userid, item} = req.body;
     if (!userid || !item) {
         return res.status(400).send('Missing userId or product data');
     }
@@ -334,9 +333,8 @@ app.post('/cart', async (req, res) => {
 app.get('/cart/:userid', async (req, res) => {
     try {
       const { userid } = req.params;
-      console.log(userid);
       const cart = await carts.findOne({ userid });
-      console.log(cart);
+    //   console.log(cart);
       if (!cart) {
         return res.status(404).json({ message: 'Cart not found for this user' });
       }

@@ -4,15 +4,15 @@
     flex-direction: column;
     justify-content: center;
     background: #f7dfe7;
-    border-radius: 5px;
+    /* border-radius: 5px; */
     height: 350px;
     width: 200px;
-    box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.2); /* x-offset, y-offset, blur radius, spread radius, color */ 
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); /* x-offset, y-offset, blur radius, spread radius, color */ 
     padding: 10px;
 
 }
 .productCard:hover{
-    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3); /* x-offset, y-offset, blur radius, spread radius, color */ 
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); /* x-offset, y-offset, blur radius, spread radius, color */ 
 }
 .productCard p{
     margin: 5px;

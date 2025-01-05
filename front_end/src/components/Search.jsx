@@ -3,6 +3,8 @@ import './Search.css'
 import search from './assets/search.png';
 
 const Search = () => {
+
+  
   return (
     <div className='bdy'>
       <div className="box">

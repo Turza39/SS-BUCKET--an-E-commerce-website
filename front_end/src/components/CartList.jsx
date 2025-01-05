@@ -10,12 +10,12 @@ const CartList = (props) => {
     const userId = localStorage.getItem('currentuserid');
     
     useEffect(() => {
-        console.log(userId);
+        // console.log(userId);
         const fetchCartItems = async () => {
             try {
                 const response = await axios.get(`http://localhost:4000/cart/${userId}`);
                 setCartList(response.data);
-                console.log('Cart items:', response.data);
+                // console.log('Cart items:', response.data);
             
             } catch (error) {
                 console.error('Error fetching cart items:', error.response ? error.response.data : error.message);
@@ -30,12 +30,8 @@ const CartList = (props) => {
     return (
         <div className='cartList'>
             {cartList.map((item, index) => (
-                <SingleCartItem 
-                    key={index} 
-                    selectedItem={props.selectItem} 
-                    selectItem={props.selectItem} 
-                    currentItem={item} 
-                />
+                // <SingleCartItem key={index} selectedItem={props.selectItem} selectItem={props.selectItem} currentItem={item} />
+                <SingleCartItem key={index} selectedItem={item} />
             ))}
         </div>
     );

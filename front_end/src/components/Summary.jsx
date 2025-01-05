@@ -25,7 +25,7 @@ const Summary = (props) => {
         <p className='text' >Summary</p>
         <div className='details'>
         <div className="dtls"><div><b>Product: </b></div> <div><b>{item.name}</b></div> </div>
-        <div className="dtls"><div><b>Price: </b></div> <div><b>{item.price}</b></div> </div>
+        <div className="dtls"><div><b>Price: </b></div> <div><b>{item.new_price}</b></div> </div>
         <div className="dtls"><div><b>Adress</b></div> <div><b>{item.address}</b></div> </div>
         <div className="dtls"><div><b>Phone</b></div> <div><b>{item.phone}</b></div> </div>
         <div className="dtls"><div><b>Delivery Charge</b></div><div><b>$5</b></div> </div>
