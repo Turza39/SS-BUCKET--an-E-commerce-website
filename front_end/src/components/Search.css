@@ -1,44 +1,94 @@
-.bdy{
+.bdy {
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
-.box{
+
+.box {
     position: absolute;
-    margin-top: 27px;
+    margin-top: 50px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #f6d6f3;
     height: 25px;
-    border-radius: 25px;
+    border-radius: 25px; /* Round shape initially */
     padding: 10px;
     box-shadow: 5px 3px 5px rgba(0, 0, 0, 0.3);
+    transition: width 0.4s, border-radius 0.4s;
+    width: 25px; /* Small width initially */
+    overflow: visible; /* Ensure suggestions can appear outside the box */
+}
 
+.box:hover {
+    width: 500px; /* Expand on hover */
+    border-radius: 25px; /* Keep rounded corners */
 }
-.box:hover > .textBox{
-    width: 500px;
+
+.box.active {
+    width: 500px; /* Stay expanded when active (input has text) */
+    border-radius: 25px; /* Keep rounded corners */
 }
-.box:hover > .searchIcon{
+
+.box .searchIcon {
     cursor: pointer;
+    display: flex;
+    align-items: center; /* Center icon vertically */
+    justify-content: center; /* Center icon horizontally */
+    height: 100%; /* Match the height of the box */
+    position: absolute;
+    right: 10px; /* Position at the far right, accounting for padding */
+    bottom: 1px;
+    color: purple;
 }
-.box .searchIcon{
-    float: right;
-}
-.textBox{
+
+.textBox {
     border: none;
     background: none;
     outline: none;
     float: left;
-    padding: 0;
-    color: white;
-    font-size: 16px;
-    transition: 0.4s;
-    line-height: 25px;
-    width: 0px;
     color: purple;
-
+    font-size: 16px;
+    transition: width 0.4s;
+    line-height: 25px;
+    width: 0px; /* Hidden initially */
 }
 
-/* #f6d6f3; */
+.box:hover > .textBox,
+.box.active > .textBox {
+    width: 100%; /* Show input field when box is expanded */
+    padding: 0 10px;
+}
+
+/* Suggestions List */
+.suggestions-list {
+    position: absolute;
+    top: calc(100% + 5px); /* Align below the search box */
+    left: 0;
+    width: 100%; /* Match the width of the search box */
+    background: white;
+    z-index: 1000;
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    max-height: 200px; /* Optional: Limit list height */
+    overflow-y: auto;
+    display: none; /* Hidden initially */
+}
+
+.box:hover > .suggestions-list,
+.box.active > .suggestions-list {
+    display: block; /* Show suggestions when the box is expanded */
+}
+
+.suggestions-list li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.suggestions-list li:hover {
+    background: #f0f0f0; /* Subtle background change on hover */
+}
+

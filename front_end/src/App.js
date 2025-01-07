@@ -1,7 +1,10 @@
-import 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import {BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Mobile from './components/Mobile';
+import Laptop from './components/Laptop';
+import Accessories from './components/Accessories';
 import Home from './pages/Home';
 import BigSales from './pages/BigSales';
 import Products from './pages/Products';
@@ -14,22 +17,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <div>
+    <div className="app-container">
       <BrowserRouter>
-       <Navbar />
-      <Routes>
-        <Route path='/' Component={Home} />
-        <Route path='/sales' Component={BigSales} />
-        <Route path='/products' Component={Products} />
-        <Route path='/cart' Component={Cart} />
-        <Route path='/account' Component={Account} />
-        <Route path='/profilelogin' Component={ProfileLogin} />
-        <Route path='/productDetails/:item' Component={ProductDetails} />
-      </Routes>
-      <Footer />
+        <Navbar />
+        <div className="main-content">
+          <Routes>
+            <Route path="/" Component={Home} />
+            <Route path="/sales" Component={BigSales} />
+            <Route path="/products" Component={Products} />
+            <Route path="/mobile" Component={Mobile} />
+            <Route path="/laptop" Component={Laptop} />
+            <Route path="/accessories" Component={Accessories} />
+            <Route path="/cart" Component={Cart} />
+            <Route path="/account" Component={Account} />
+            <Route path="/profilelogin" Component={ProfileLogin} />
+            <Route path="/productDetails/:item" Component={ProductDetails} />
+          </Routes>
+        </div>
+        <Footer />
       </BrowserRouter>
     </div>
   );
 }
 
 export default App;
+

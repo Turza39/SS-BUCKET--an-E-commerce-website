@@ -1,3 +1,6 @@
+.slideshow-container{
+  margin-top: -50px;
+}
 .slideshow-container .product {
   display: flex;
   align-items: center;

@@ -1,0 +1,18 @@
+.search-container {
+    position: relative;
+    z-index: 10;
+}
+
+.home {
+    position: relative;
+}
+
+.big-screen {
+    position: relative;
+    z-index: 1; 
+}
+
+.products {
+    position: relative;
+    z-index: 1;
+}

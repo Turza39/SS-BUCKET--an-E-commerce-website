@@ -1,0 +1,13 @@
+.generic-product {
+    padding: 20px;
+    text-align: center;
+}
+  
+.generic-product-grid {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 20px;
+    justify-content: center; 
+    margin: 0 auto; 
+    max-width: 1200px; 
+}

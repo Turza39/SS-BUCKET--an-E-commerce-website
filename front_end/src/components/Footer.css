@@ -1,4 +1,4 @@
-.footer{
+/* .footer{
     bottom: 0px;
     width: 100%;
     color: white;
@@ -30,4 +30,68 @@
 .terms a{
     padding: 10px;
     cursor: pointer;
+} */
+
+
+
+
+/* Apply a flexbox layout to ensure the footer sticks to the bottom */
+body, html {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the page takes at least the full height of the viewport */
+}
+
+.main-content {
+    flex: 1; /* This pushes the footer to the bottom when content is short */
+}
+
+.footer {
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    background: rgb(86, 31, 168);
+    font-size: 15px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 10px 0;
+}
+
+.contact {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.contact a {
+    padding: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+}
+
+.contact p {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.terms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.terms a {
+    padding: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
 }

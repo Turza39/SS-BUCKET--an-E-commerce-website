@@ -3,7 +3,7 @@
     align-items: center;
     justify-content: space-around;
     box-shadow: 0 1px, 3px -2px black;
-    background: linear-gradient(45deg, #f6a2bd, #1D2671);
+    background: linear-gradient(45deg, #f6a2bd, #5967e6);
     gap: 5px;
 }
 .logo{
@@ -24,6 +24,7 @@
 .cart-profile{
     display: flex;
     cursor: pointer;
+    gap: 7px;
 }
 .cart-count{
     display: flex;

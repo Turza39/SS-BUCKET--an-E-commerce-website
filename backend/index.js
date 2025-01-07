@@ -47,7 +47,7 @@ const ProductSchema = mongoose.Schema({
     old_price: { type: Number, required: true },
     name: { type: String, required: true },
     quantity: { type: Number, required: true },
-    description: {type: String, required: true},
+    description: {type: String, required: false},
     date: { type: Date, default: Date.now },
     available: { type: Boolean, default: true }
 })
@@ -188,6 +188,50 @@ app.get("/allproducts", async (req, res) => {
     }
 })
 
+// Get product of specific catogery
+app.get("/products/:category", async (req, res) => {
+    const { category } = req.params;
+    try {
+        const products = await Product.find({ category: category });
+        console.log(`Products in category: ${category} fetched`);
+        res.json(products);
+    } catch (error) {
+        console.error("Error fetching products by category:", error);
+        res.status(500).send(error);
+    }
+});
+
+
+
+// Creating api for searching a product
+
+app.get("/searchsuggestions", async (req, res) => {
+    try {
+        const { q } = req.query;
+
+        if (!q || q.trim() === "") {
+            return res.status(400).json({ error: "Query is required" });
+        }
+        console.log(q)
+        const filter = {
+            $or: [
+                { name: { $regex: q, $options: "i" } },
+                { category: { $regex: q, $options: "i" } },
+                { brand: { $regex: q, $options: "i" } }
+            ]
+        };
+
+        // Limit the number of results for performance
+        const suggestions = await Product.find(filter).limit(10);
+
+        res.json(suggestions);
+    } catch (error) {
+        console.error("Error fetching", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
 // Creating api for updating product data
 
 app.put('/editItem/:id', async (req, res) => {
@@ -207,6 +251,7 @@ const orderSchema = mongoose.Schema({
     brand: { type: String, required: true },
     name: { type: String, required: true, },
     price: { type: Number, required: true },
+    image: { type: String, required: true },
     address: { type: String, required: true, },
     phone: { type: String, required: true, },
     discount: { type: Number, },
@@ -249,6 +294,42 @@ app.delete("/delivered", async (req, res) => {
     }
 });
 
+// API to get the total income
+app.get('/orders/totalIncome', async (req, res) => {
+    try {
+        const result = await orders.aggregate([
+            {
+                $group: {
+                    _id: null, 
+                    totalIncome: { $sum: "$total" }
+                }
+            }
+        ]);
+
+        const totalIncome = result.length > 0 ? result[0].totalIncome : 0;
+
+        res.status(200).json({ totalIncome });
+    } catch (error) {
+        console.error('Error calculating total income:', error.message);
+        res.status(500).json({ message: 'Error calculating total income', error: error.message });
+    }
+});
+
+
+// API to count the number of pending orders
+app.get('/orders/count', async (req, res) => {
+    try {
+        // Count the total number of orders
+        const orderCount = await orders.countDocuments();
+
+        res.status(200).json({ orderCount });
+    } catch (error) {
+        console.error('Error counting orders:', error.message);
+        res.status(500).json({ message: 'Error counting orders', error: error.message });
+    }
+});
+
+
 // schema for sale's history 
 const salesSchema = mongoose.Schema({
     brand: { type: String, required: true },
@@ -284,72 +365,273 @@ app.get("/saleshistory", async (req, res) => {
     }
 })
 
+
+
+
 // cart schema 
 const cartSchema = mongoose.Schema({
-    userid: {
-        type: String,
-        required: true
-    },
-    item: {
-        type: [ProductSchema],
-        default: null,
-    }
+    brand: { type: String, required: true },
+    name: { type: String, required: true, },
+    image: {type: String, required: true},
+    price: { type: Number, required: true },
+    address: { type: String, required: true, },
+    phone: { type: String, required: true, },
+    discount: { type: Number, },
+    total: { type: Number, required: true, },
+    clientId: { type: String, required: true },
+    clientName: { type: String, }
 });
 const carts = mongoose.model('carts', cartSchema)
 
 // api to add to cart 
 app.post('/cart', async (req, res) => {
-    const { userid, item} = req.body;
-    if (!userid || !item) {
-        return res.status(400).send('Missing userId or product data');
+    const cartItem = req.body; 
+
+    const { clientId, brand, name, price, address, phone, discount, total, clientName, image } = cartItem;
+
+    if (!clientId || !brand || !name || !price || !address || !phone || !total) {
+        return res.status(400).json({ message: 'Missing required fields in the cart object' });
     }
 
     try {
-        const cart = await carts.findOne({ userid });
+        const existingCartItem = await carts.findOne({ clientId, brand, name });
 
-        if (!cart) {
-            const newCart = new carts({ userid, item: item });
-            await newCart.save();
-            return res.status(201).send('Product added to new cart');
+        if (existingCartItem) {
+            return res.status(409).json({ message: 'Product already exists in the cart' });
         }
 
-        const existingProduct = cart.item.find(items => items.id === item.id);
+        const newCartItem = new carts(cartItem);
+        await newCartItem.save();
 
-        if (existingProduct) {
-            return res.status(409).send('Product already exists in cart');
-        }
-
-        cart.item.push(item);
-        await cart.save();
-
-        res.status(200).send('Product added to existing cart');
+        res.status(201).json({ message: 'Product added to cart successfully' });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal server error');
+        console.error('Error adding product to cart:', err);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 
+  
 // api to fetch cart items
 app.get('/cart/:userid', async (req, res) => {
     try {
-      const { userid } = req.params;
-      const cart = await carts.findOne({ userid });
-    //   console.log(cart);
-      if (!cart) {
-        return res.status(404).json({ message: 'Cart not found for this user' });
+        const { userid } = req.params;
+
+        const cartItems = await carts.find({ clientId: userid });
+
+        if (!cartItems || cartItems.length === 0) {
+            return res.status(404).json({ message: 'No cart items found for this user' });
+        }
+
+        res.status(200).json(cartItems);
+    } catch (error) {
+        console.error('Error fetching cart items:', error);
+        res.status(500).json({ message: 'Error fetching cart items', error: error.message });
+    }
+});
+
+// Delete a cart item
+app.post('/cart/remove', async (req, res) => {
+    const { clientId, itemId } = req.body;
+  
+    if (!clientId || !itemId) {
+      return res.status(400).json({ message: 'Missing clientId or itemId' });
+    }
+  
+    try {
+      const deletedCartItem = await carts.findOneAndDelete({ clientId, _id: itemId });
+  
+      if (!deletedCartItem) {
+        return res.status(404).json({ message: 'Cart item not found' });
       }
   
-      res.status(200).json(cart.item);
+      res.status(200).json({ message: 'Item removed successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching cart', error: error.message });
+      console.error('Error removing item:', error.message);
+      res.status(500).json({ message: 'Failed to remove item', error: error.message });
+    }
+  });
+    
+
+
+
+
+
+
+// Define the bank account schema
+const bankAccountSchema = mongoose.Schema({
+    accountHolderName: { type: String, required: true }, // Name from the frontend
+    email: { type: String, required: true }, // Email from the frontend
+    phone: { type: String, required: true }, // Phone from the frontend
+    accountNumber: { type: String, required: true, unique: true }, // Account number from the frontend
+    secretKey: { type: String, required: true }, // Secret key from the frontend
+    dateAdded: { type: Date, default: Date.now }
+  });
+  
+  const BankAccount = mongoose.model('BankAccount', bankAccountSchema);
+  
+  // Save bank account information
+  app.post('/createaccount', async (req, res) => {
+    try {
+      const { name, email, phone, accountNo, secretKey } = req.body;
+  
+      // Check if account number already exists
+      const existingAccount = await BankAccount.findOne({ accountNumber: accountNo });
+      if (existingAccount) {
+        return res.status(400).json({ message: 'Account number already exists' });
+      }
+  
+      // Create a new bank account document
+      const newBankAccount = new BankAccount({
+        accountHolderName: name,
+        email: email,
+        phone: phone,
+        accountNumber: accountNo,
+        secretKey: secretKey
+      });
+  
+      // Save the new bank account
+      await newBankAccount.save();
+      res.status(201).json({ message: 'Bank account created successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error saving bank information', error: error.message });
+    }
+  });
+  
+  // delivery info
+  
+  
+  // Define Delivery Info Schema
+  const DeliveryInfoSchema = mongoose.Schema({
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User model
+      address: { type: String, required: true },
+      phone: { type: String, required: true },
+      bankAccount: { type: String, required: true },
+      cvc: { type: String, required: true },
+      secretKey: { type: String, required: true },
+    });
+    
+    // Define Transaction Schema
+    const TransactionSchema = mongoose.Schema({
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      transactionId: { type: String, required: true },
+      date: { type: Date, default: Date.now },
+    });
+    
+    // Create models
+    const DeliveryInfo = mongoose.model('DeliveryInfo', DeliveryInfoSchema);
+    const Transaction = mongoose.model('Transaction', TransactionSchema);
+    
+   // Save or Update Delivery Info
+  app.post('/saveDeliveryInfo', async (req, res) => {
+      try {
+        const { userId, address, phone, bankAccount, cvc, secretKey } = req.body;
+    
+        // Find existing delivery info for the user
+        let deliveryInfo = await DeliveryInfo.findOne({ userId });
+    
+        if (deliveryInfo) {
+          // If delivery info exists, update it
+          deliveryInfo.address = address;
+          deliveryInfo.phone = phone;
+          deliveryInfo.bankAccount = bankAccount;
+          deliveryInfo.cvc = cvc;
+          deliveryInfo.secretKey = secretKey;
+    
+          // Save the updated delivery info
+          await deliveryInfo.save();
+          res.status(200).json({ message: 'Delivery information updated successfully' });
+        } else {
+          // If no delivery info exists for the user, create a new one
+          const newDeliveryInfo = new DeliveryInfo({
+            userId,
+            address,
+            phone,
+            bankAccount,
+            cvc,
+            secretKey,
+          });
+    
+          // Save the new delivery info
+          await newDeliveryInfo.save();
+          res.status(200).json({ message: 'Delivery information saved successfully' });
+        }
+      } catch (err) {
+        console.error('Error saving/updating delivery information:', err);
+        res.status(500).json({ message: 'Error saving delivery information' });
+      }
+    });
+  
+    //fetch delivery info
+app.get('/getDeliveryInfo/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const deliveryInfo = await DeliveryInfo.findOne({ userId: req.params.userId });
+  
+      if (deliveryInfo) {
+        res.status(200).json(deliveryInfo);
+        console.log(deliveryInfo.address);
+      } else {
+        res.status(404).json({ message: 'No delivery information found' });
+      }
+    } catch (err) {
+      console.error('Error fetching delivery information:', err);
+      res.status(500).json({ message: 'Error fetching delivery information' });
     }
   });
 
+  // Update Profile Picture API
+  app.post('/api/updateProfilePic', async (req, res) => {
+      const { username, profilePic } = req.body;
+    
+      if (!username || !profilePic) {
+        return res.status(400).json({ message: 'Username and profile picture are required' });
+      }
+    
+      try {
+        const updatedUser = await User.findOneAndUpdate(
+          { username },
+          { profilePic },
+          { new: true } // Return the updated document
+        );
+    
+        if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+    
+        res.status(200).json({ message: 'Profile picture updated successfully', user: updatedUser });
+      } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    });
 
-app.listen(port, (error) => {
-    if (!error) {
-        console.log("Server running on port: " + port)
-    } else {
-        console.log("Error: " + error);
-    }
-})
+
+    app.post('/transferFunds', async (req, res) => {
+        try {
+          const { userId, amount } = req.body;
+      
+          // Fetch user delivery info
+          const user = await DeliveryInfo.findOne({ userId });
+          if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+          }
+      
+          // Simulate fund transfer (you can replace this with actual bank API logic)
+          const adminAccount = 'admin-bank-account';
+          console.log(Transferring `$${amount} from ${user.bankAccount} to ${adminAccount}`);
+      
+          res.status(200).json({ success: true, message: 'Funds transferred successfully' });
+        } catch (error) {
+          console.error('Error transferring funds:', error);
+          res.status(500).json({ success: false, message: 'Error transferring funds' });
+        }
+      });
+
+    app.listen(port, (error) => {
+        if (!error) {
+            console.log("Server running on port: " + port)
+        } else {
+            console.log("Error: " + error);
+        }
+    })
+    

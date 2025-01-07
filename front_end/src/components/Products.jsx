@@ -6,6 +6,8 @@ import ProductCard from './ProductCard';
 const Products = (props) => {
 
   const [allProducts, setallProducts] = useState([]);
+    const [isAscending, setIsAscending] = useState(true); // Track toggle state, initially ascending
+
   useEffect(()=>{
     const fetchdata = async ()=>{
       try{
@@ -19,10 +21,22 @@ const Products = (props) => {
     fetchdata();
   }, [])
 
+  const toggleSortOrder = () => {
+    const sortedProducts = [...allProducts].sort((a, b) => {
+        if (isAscending) {
+            return b.new_price - a.new_price; 
+        } else {
+            return a.new_price - b.new_price; 
+        }
+    });
+    setallProducts(sortedProducts);
+    setIsAscending(!isAscending); 
+};
+
   const laptops = allProducts.filter(item=> item.category === "Laptop");
   const phones = allProducts.filter(item=> item.category === "Phone");
-  const headphones = allProducts.filter(item=> item.category === "Headphone");
-  const catgory = props.category==="Laptop"? laptops: props.category==="Phone"? phones: headphones;
+  const accessories = allProducts.filter(item=> item.category === "Accessories");
+  const catgory = props.category==="Laptop"? laptops: props.category==="Phone"? phones: accessories;
     
   return (
     <div className='cards'>
