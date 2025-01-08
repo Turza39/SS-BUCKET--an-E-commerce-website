@@ -40,8 +40,8 @@ const Pendings = () => {
               <div key={index} className="product-item">
                 <div className="details">
                   <p>Brand: {item.brand}</p>
-                  <p>Model: {item.model}</p>
-                  <p>Price: {item.price}</p>
+                  <p>Model: {item.name}</p>
+                  <p>Price: ${item.price}</p>
                   <p>Address: {item.address}</p>
                   <p>Client's phone: {item.phone}</p>
                 </div>

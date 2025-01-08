@@ -25,12 +25,9 @@ const ProductCard = (props) => {
         <img src={props.item.image} alt="" />
         <p className='brand'>Brand: {props.item.brand}</p>
         <p className='model'>Model: {props.item.name}</p>
-        <p className='price'>Price: <s>${props.item.old_price}</s> ${props.item.new_price}</p>
+        <p className='price'>Price: <s>${props.item.old_price}</s> ${props.item.new_price}</p> <br />
+        <p><u>Check details</u></p>
       </Link>
-        <div className="buttons">
-            <button onClick={()=>{cartHandle(props.item)}} className='addCart'><b>Add to cart</b></button>
-            <button className='buy'><Link style={{textDecoration: "none"}} to={`/productDetails/${encodedItem}`}><b>Buy now</b></Link></button>
-        </div>
       </div>
     </div>
   )

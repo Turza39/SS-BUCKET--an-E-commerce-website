@@ -1,4 +1,4 @@
-.resetContainer{
+/* .resetContainer{
     height: 850px;
     width: 100%;
     display: flex;
@@ -61,4 +61,145 @@
 .resetContainer .resetBox .image img{
     width: 100%;
     height: 100%;
+} */
+
+
+/* General Body Styling */
+/* body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+} */
+
+/* Container Styling */
+/* Container Styling */
+/* Container Styling */
+/* Container Styling */
+.admin-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+}
+
+/* Title Styling */
+.admin-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333333;
+    margin-bottom: 20px;
+}
+
+/* Image Preview Container */
+.image-preview-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.image-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Label Styling */
+.form-label {
+    font-size: 0.9rem;
+    color: #555555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Input Field Styling */
+.form-input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Image Upload Input Styling */
+.form-input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: #e7f3ff; /* Light blue background */
+    /* border: 2px dashed #007bff; Dashed blue border */
+    color: #007bff; /* Blue text color */
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.form-input[type="file"]::file-selector-button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Button background */
+    color: #ffffff; /* Button text color */
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.form-input[type="file"]::file-selector-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.form-input[type="file"]:hover {
+    background-color: #d8ebff; /* Slightly darker blue on hover */
+}
+
+/* Button Styling */
+.form-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-button:hover {
+    background-color: #0056b3;
+}
+
+/* Message Styling */
+.admin-message {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #d9534f;
+    margin-bottom: 10px;
+}
+
+/* Loading Message */
+.admin-loading-message {
+    text-align: center;
+    font-size: 1rem;
+    color: #333333;
 }

@@ -1,51 +1,13 @@
-/* .footer{
-    bottom: 0px;
-    width: 100%;
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    background: rgb(86, 31, 168);
-    font-size: 15px;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-}
-.contact{
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.contact a{
-    padding: 5px;
-}
-.contact p{
-    font-size: 20px;
-}
-.terms{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.terms a{
-    padding: 10px;
-    cursor: pointer;
-} */
-
-
-
-
-/* Apply a flexbox layout to ensure the footer sticks to the bottom */
 body, html {
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure the page takes at least the full height of the viewport */
+    min-height: 100vh;
 }
 
 .main-content {
-    flex: 1; /* This pushes the footer to the bottom when content is short */
+    flex: 1; 
 }
 
 .footer {
@@ -53,7 +15,7 @@ body, html {
     color: white;
     display: flex;
     justify-content: space-around;
-    background: rgb(86, 31, 168);
+    background: rgb(152, 86, 251);
     font-size: 15px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     padding: 10px 0;

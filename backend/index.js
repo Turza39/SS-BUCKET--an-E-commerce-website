@@ -25,7 +25,8 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
-
+app.use(express.json({ limit: '10mb' })); // JSON payload limit increased to 10MB
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/images', express.static('upload/images'))
 app.post("/upload", upload.single('product'), (req, res) => {
     res.json({
@@ -36,7 +37,74 @@ app.post("/upload", upload.single('product'), (req, res) => {
 
 mongoose.connect("mongodb://localhost:27017/E-commerce")
 
-// Schema model for product details
+// Schema model for admin
+const adminSchema = mongoose.Schema({
+    name: { type: String, required: true },
+    image: { type: String, required: false },
+    email: { type: String, required: false },
+    password: { type: String, required: true },
+    bankAccountNo: { type: String, required: true }
+});
+const Admin = mongoose.model("admin", adminSchema);
+
+app.post('/addadmin', async (req, res) => {
+    try {
+        const { name, image, email, password, bankAccountNo, currentPassword } = req.body;
+
+        // Check if an admin exists
+        const admin = await Admin.findOne();
+
+        if (!admin) {
+            // Create a new admin if none exists
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const newAdmin = new Admin({
+                name,
+                image,
+                email,
+                bankAccountNo,
+                password: hashedPassword,
+            });
+
+            await newAdmin.save();
+            return res.status(201).json({ message: 'Admin created successfully.', admin: newAdmin });
+        }
+
+        // For updating the existing admin
+        const isPasswordCorrect = await bcrypt.compare(currentPassword, admin.password);
+        if (!isPasswordCorrect) {
+            return res.status(401).json({ message: 'Current password is incorrect.' });
+        }
+
+        if (name) admin.name = name;
+        if (image) admin.image = image;
+        if (email) admin.email = email;
+        if (bankAccountNo) admin.bankAccountNo = bankAccountNo;
+        if (password) admin.password = await bcrypt.hash(password, 10);
+
+        await admin.save();
+        res.status(200).json({ message: 'Admin updated successfully.', admin });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error.', error: error.message });
+    }
+});
+
+app.get('/getadmin', async (req, res) => {
+    try {
+        const admin = await Admin.findOne();
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin does not exist.' });
+        }
+        const { password, ...adminWithoutPassword } = admin.toObject();
+        res.status(200).json({ admin: adminWithoutPassword });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error.', error: error.message });
+    }
+});
+
+
+// Product schema
 
 const ProductSchema = mongoose.Schema({
     id: { type: Number, required: false },
@@ -47,7 +115,7 @@ const ProductSchema = mongoose.Schema({
     old_price: { type: Number, required: true },
     name: { type: String, required: true },
     quantity: { type: Number, required: true },
-    description: {type: String, required: false},
+    description: { type: String, required: false },
     date: { type: Date, default: Date.now },
     available: { type: Boolean, default: true }
 })
@@ -300,7 +368,7 @@ app.get('/orders/totalIncome', async (req, res) => {
         const result = await orders.aggregate([
             {
                 $group: {
-                    _id: null, 
+                    _id: null,
                     totalIncome: { $sum: "$total" }
                 }
             }
@@ -345,12 +413,12 @@ const salesSchema = mongoose.Schema({
 const sales = mongoose.model('sales', salesSchema)
 
 // api to add to sale's history 
-app.post("/saleshistory", async(req, res)=>{
-    try{
+app.post("/saleshistory", async (req, res) => {
+    try {
         const newSale = new sales(req.body);
         await newSale.save();
         res.send(true);
-    }catch(error){
+    } catch (error) {
         res.send(false)
     }
 })
@@ -372,7 +440,7 @@ app.get("/saleshistory", async (req, res) => {
 const cartSchema = mongoose.Schema({
     brand: { type: String, required: true },
     name: { type: String, required: true, },
-    image: {type: String, required: true},
+    image: { type: String, required: true },
     price: { type: Number, required: true },
     address: { type: String, required: true, },
     phone: { type: String, required: true, },
@@ -385,7 +453,7 @@ const carts = mongoose.model('carts', cartSchema)
 
 // api to add to cart 
 app.post('/cart', async (req, res) => {
-    const cartItem = req.body; 
+    const cartItem = req.body;
 
     const { clientId, brand, name, price, address, phone, discount, total, clientName, image } = cartItem;
 
@@ -410,7 +478,7 @@ app.post('/cart', async (req, res) => {
     }
 });
 
-  
+
 // api to fetch cart items
 app.get('/cart/:userid', async (req, res) => {
     try {
@@ -432,29 +500,70 @@ app.get('/cart/:userid', async (req, res) => {
 // Delete a cart item
 app.post('/cart/remove', async (req, res) => {
     const { clientId, itemId } = req.body;
-  
+
     if (!clientId || !itemId) {
-      return res.status(400).json({ message: 'Missing clientId or itemId' });
+        return res.status(400).json({ message: 'Missing clientId or itemId' });
     }
+
+    try {
+        const deletedCartItem = await carts.findOneAndDelete({ clientId, _id: itemId });
+
+        if (!deletedCartItem) {
+            return res.status(404).json({ message: 'Cart item not found' });
+        }
+
+        res.status(200).json({ message: 'Item removed successfully' });
+    } catch (error) {
+        console.error('Error removing item:', error.message);
+        res.status(500).json({ message: 'Failed to remove item', error: error.message });
+    }
+});
+
+
+
+
+
+
+
+// Define the transaction schema
+const TransactionSchema = new mongoose.Schema({
+    accountNumber: { type: String, required: false },
+    transactionAmount: { type: Number, required: false },
+    receiverAccountNumber: { type: String, required: false },
+    date: { type: Date, default: Date.now },
+  });
+  
+  const Transaction = mongoose.model('Transaction', TransactionSchema);
+  
+  // API to save transaction info
+  app.post('/api/saveTransaction', async (req, res) => {
+    const {  accountNumber, transactionAmount, receiverAccountNumber } = req.body;
   
     try {
-      const deletedCartItem = await carts.findOneAndDelete({ clientId, _id: itemId });
+      const transaction = new Transaction({
+        accountNumber,
+        transactionAmount,
+        receiverAccountNumber,
+      });
   
-      if (!deletedCartItem) {
-        return res.status(404).json({ message: 'Cart item not found' });
-      }
-  
-      res.status(200).json({ message: 'Item removed successfully' });
+      await transaction.save();
+      res.status(201).json({ success: true, message: 'Transaction saved successfully!' });
     } catch (error) {
-      console.error('Error removing item:', error.message);
-      res.status(500).json({ message: 'Failed to remove item', error: error.message });
+      console.error('Error saving transaction:', error);
+      res.status(500).json({ success: false, message: 'Failed to save transaction' });
     }
   });
-    
-
-
-
-
+  
+  // API to get all transaction info
+  app.get('/api/getTransactions', async (req, res) => {
+    try {
+      const transactions = await Transaction.find({});
+      res.status(200).json({ success: true, data: transactions });
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch transactions' });
+    }
+  });
 
 
 // Define the bank account schema
@@ -465,173 +574,168 @@ const bankAccountSchema = mongoose.Schema({
     accountNumber: { type: String, required: true, unique: true }, // Account number from the frontend
     secretKey: { type: String, required: true }, // Secret key from the frontend
     dateAdded: { type: Date, default: Date.now }
-  });
-  
-  const BankAccount = mongoose.model('BankAccount', bankAccountSchema);
-  
-  // Save bank account information
-  app.post('/createaccount', async (req, res) => {
+});
+
+const BankAccount = mongoose.model('BankAccount', bankAccountSchema);
+
+// Save bank account information
+app.post('/createaccount', async (req, res) => {
     try {
-      const { name, email, phone, accountNo, secretKey } = req.body;
-  
-      // Check if account number already exists
-      const existingAccount = await BankAccount.findOne({ accountNumber: accountNo });
-      if (existingAccount) {
-        return res.status(400).json({ message: 'Account number already exists' });
-      }
-  
-      // Create a new bank account document
-      const newBankAccount = new BankAccount({
-        accountHolderName: name,
-        email: email,
-        phone: phone,
-        accountNumber: accountNo,
-        secretKey: secretKey
-      });
-  
-      // Save the new bank account
-      await newBankAccount.save();
-      res.status(201).json({ message: 'Bank account created successfully' });
+        const { name, email, phone, accountNo, secretKey } = req.body;
+
+        // Check if account number already exists
+        const existingAccount = await BankAccount.findOne({ accountNumber: accountNo });
+        if (existingAccount) {
+            return res.status(400).json({ message: 'Account number already exists' });
+        }
+
+        // Create a new bank account document
+        const newBankAccount = new BankAccount({
+            accountHolderName: name,
+            email: email,
+            phone: phone,
+            accountNumber: accountNo,
+            secretKey: secretKey
+        });
+
+        // Save the new bank account
+        await newBankAccount.save();
+        res.status(201).json({ message: 'Bank account created successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error saving bank information', error: error.message });
+        res.status(500).json({ message: 'Error saving bank information', error: error.message });
     }
-  });
-  
-  // delivery info
-  
-  
-  // Define Delivery Info Schema
-  const DeliveryInfoSchema = mongoose.Schema({
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User model
-      address: { type: String, required: true },
-      phone: { type: String, required: true },
-      bankAccount: { type: String, required: true },
-      cvc: { type: String, required: true },
-      secretKey: { type: String, required: true },
-    });
-    
-    // Define Transaction Schema
-    const TransactionSchema = mongoose.Schema({
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-      transactionId: { type: String, required: true },
-      date: { type: Date, default: Date.now },
-    });
-    
-    // Create models
-    const DeliveryInfo = mongoose.model('DeliveryInfo', DeliveryInfoSchema);
-    const Transaction = mongoose.model('Transaction', TransactionSchema);
-    
-   // Save or Update Delivery Info
-  app.post('/saveDeliveryInfo', async (req, res) => {
-      try {
+});
+
+// delivery info
+
+
+// Define Delivery Info Schema
+const DeliveryInfoSchema = mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to User model
+    address: { type: String, required: true },
+    phone: { type: String, required: true },
+    bankAccount: { type: String, required: true },
+    cvc: { type: String, required: true },
+    secretKey: { type: String, required: true },
+});
+
+
+// Create models
+const DeliveryInfo = mongoose.model('DeliveryInfo', DeliveryInfoSchema);
+
+// Save or Update Delivery Info
+app.post('/saveDeliveryInfo', async (req, res) => {
+    try {
         const { userId, address, phone, bankAccount, cvc, secretKey } = req.body;
-    
+
         // Find existing delivery info for the user
         let deliveryInfo = await DeliveryInfo.findOne({ userId });
-    
+
         if (deliveryInfo) {
-          // If delivery info exists, update it
-          deliveryInfo.address = address;
-          deliveryInfo.phone = phone;
-          deliveryInfo.bankAccount = bankAccount;
-          deliveryInfo.cvc = cvc;
-          deliveryInfo.secretKey = secretKey;
-    
-          // Save the updated delivery info
-          await deliveryInfo.save();
-          res.status(200).json({ message: 'Delivery information updated successfully' });
+            // If delivery info exists, update it
+            deliveryInfo.address = address;
+            deliveryInfo.phone = phone;
+            deliveryInfo.bankAccount = bankAccount;
+            deliveryInfo.cvc = cvc;
+            deliveryInfo.secretKey = secretKey;
+
+            // Save the updated delivery info
+            await deliveryInfo.save();
+            res.status(200).json({ message: 'Delivery information updated successfully' });
         } else {
-          // If no delivery info exists for the user, create a new one
-          const newDeliveryInfo = new DeliveryInfo({
-            userId,
-            address,
-            phone,
-            bankAccount,
-            cvc,
-            secretKey,
-          });
-    
-          // Save the new delivery info
-          await newDeliveryInfo.save();
-          res.status(200).json({ message: 'Delivery information saved successfully' });
+            // If no delivery info exists for the user, create a new one
+            const newDeliveryInfo = new DeliveryInfo({
+                userId,
+                address,
+                phone,
+                bankAccount,
+                cvc,
+                secretKey,
+            });
+
+            // Save the new delivery info
+            await newDeliveryInfo.save();
+            res.status(200).json({ message: 'Delivery information saved successfully' });
         }
-      } catch (err) {
+    } catch (err) {
         console.error('Error saving/updating delivery information:', err);
         res.status(500).json({ message: 'Error saving delivery information' });
-      }
-    });
-  
-    //fetch delivery info
+    }
+});
+
+//fetch delivery info
 app.get('/getDeliveryInfo/:userId', async (req, res) => {
     try {
-      const { userId } = req.params;
-      const deliveryInfo = await DeliveryInfo.findOne({ userId: req.params.userId });
-  
-      if (deliveryInfo) {
-        res.status(200).json(deliveryInfo);
-        console.log(deliveryInfo.address);
-      } else {
-        res.status(404).json({ message: 'No delivery information found' });
-      }
-    } catch (err) {
-      console.error('Error fetching delivery information:', err);
-      res.status(500).json({ message: 'Error fetching delivery information' });
-    }
-  });
+        const { userId } = req.params;
+        const deliveryInfo = await DeliveryInfo.findOne({ userId: req.params.userId });
 
-  // Update Profile Picture API
-  app.post('/api/updateProfilePic', async (req, res) => {
-      const { username, profilePic } = req.body;
-    
-      if (!username || !profilePic) {
-        return res.status(400).json({ message: 'Username and profile picture are required' });
-      }
-    
-      try {
-        const updatedUser = await User.findOneAndUpdate(
-          { username },
-          { profilePic },
-          { new: true } // Return the updated document
-        );
-    
-        if (!updatedUser) {
-          return res.status(404).json({ message: 'User not found' });
+        if (deliveryInfo) {
+            res.status(200).json(deliveryInfo);
+            console.log(deliveryInfo.address);
+        } else {
+            res.status(404).json({ message: 'No delivery information found' });
         }
-    
+    } catch (err) {
+        console.error('Error fetching delivery information:', err);
+        res.status(500).json({ message: 'Error fetching delivery information' });
+    }
+});
+
+// Update Profile Picture API
+app.post('/api/updateProfilePic', async (req, res) => {
+    const { username, profilePic } = req.body;
+
+    if (!username || !profilePic) {
+        return res.status(400).json({ message: 'Username and profile picture are required' });
+    }
+
+    try {
+        const updatedUser = await User.findOneAndUpdate(
+            { username },
+            { profilePic },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         res.status(200).json({ message: 'Profile picture updated successfully', user: updatedUser });
-      } catch (error) {
+    } catch (error) {
         console.error('Error updating profile picture:', error);
         res.status(500).json({ message: 'Internal server error' });
-      }
-    });
+    }
+});
 
 
-    app.post('/transferFunds', async (req, res) => {
-        try {
-          const { userId, amount } = req.body;
-      
-          // Fetch user delivery info
-          const user = await DeliveryInfo.findOne({ userId });
-          if (!user) {
+app.post('/transferFunds', async (req, res) => {
+    try {
+        const { userId, amount } = req.body;
+
+        // Fetch user delivery info
+        const user = await DeliveryInfo.findOne({ userId });
+        if (!user) {
             return res.status(404).json({ message: 'User not found' });
-          }
-      
-          // Simulate fund transfer (you can replace this with actual bank API logic)
-          const adminAccount = 'admin-bank-account';
-          console.log(Transferring `$${amount} from ${user.bankAccount} to ${adminAccount}`);
-      
-          res.status(200).json({ success: true, message: 'Funds transferred successfully' });
-        } catch (error) {
-          console.error('Error transferring funds:', error);
-          res.status(500).json({ success: false, message: 'Error transferring funds' });
         }
-      });
 
-    app.listen(port, (error) => {
-        if (!error) {
-            console.log("Server running on port: " + port)
-        } else {
-            console.log("Error: " + error);
-        }
-    })
-    
+        // Simulate fund transfer (you can replace this with actual bank API logic)
+        const adminAccount = 'admin-bank-account';
+        console.log(Transferring`$${amount} from ${user.bankAccount} to ${adminAccount}`);
+
+        res.status(200).json({ success: true, message: 'Funds transferred successfully' });
+    } catch (error) {
+        console.error('Error transferring funds:', error);
+        res.status(500).json({ success: false, message: 'Error transferring funds' });
+    }
+});
+
+// Admin profile schema
+
+app.listen(port, (error) => {
+    if (!error) {
+        console.log("Server running on port: " + port)
+    } else {
+        console.log("Error: " + error);
+    }
+})
+

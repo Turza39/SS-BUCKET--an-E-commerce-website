@@ -6,7 +6,7 @@ import ProductCard from './ProductCard';
 const Products = (props) => {
 
   const [allProducts, setallProducts] = useState([]);
-    const [isAscending, setIsAscending] = useState(true); // Track toggle state, initially ascending
+    const [isAscending, setIsAscending] = useState(true); 
 
   useEffect(()=>{
     const fetchdata = async ()=>{

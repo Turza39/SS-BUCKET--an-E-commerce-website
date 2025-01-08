@@ -2,11 +2,20 @@ import React, { useEffect, useState } from 'react';
 import './Profile.css';
 import user from './assets/user.png';
 import { useNavigate } from 'react-router-dom';
+import Toast from './Toast';
 
 const token = localStorage.getItem('token');
 const userId = localStorage.getItem('currentuserid');
 
 const Profile = (props) => {
+  const [toast, setToast] = useState({ message: "", type: "" });
+  const showToast = (message, type) => {
+    setToast({ message, type });
+  };
+  const closeToast = () => {
+    setToast({ message: "", type: "" });
+  };
+
   const [profilePic, setProfilePic] = useState(localStorage.getItem('profilePic') || '');
   const [deliveryInfo, setDeliveryInfo] = useState({
     address: '',
@@ -16,7 +25,6 @@ const Profile = (props) => {
     secretKey: '',
   });
 
-  // Handle input change for delivery form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setDeliveryInfo((prevInfo) => ({
@@ -25,12 +33,11 @@ const Profile = (props) => {
     }));
   };
 
-  // Submit the delivery information
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
     const deliveryData = {
-      userId,  // Use the userId from localStorage
+      userId,
       address: deliveryInfo.address,
       phone: deliveryInfo.phone,
       bankAccount: deliveryInfo.bankAccount,
@@ -38,7 +45,6 @@ const Profile = (props) => {
       secretKey: deliveryInfo.secretKey,
     };
 
-    // Send the delivery data to the backend API to save
     fetch('http://localhost:4000/saveDeliveryInfo', {
       method: 'POST',
       headers: {
@@ -49,38 +55,40 @@ const Profile = (props) => {
       .then(response => response.json())
       .then(data => {
         console.log('Delivery Information Saved:', data);
-        alert('Delivery information saved successfully!');
+        showToast('Delivery information saved successfully!', 'success');
       })
       .catch(error => {
         console.error('Error saving delivery information:', error);
-        alert('Error saving delivery information.');
+        showToast('Error saving delivery information.', 'error');
       });
   };
 
-  // Handle profile picture change
   const handleProfilePicChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = async () => {
         try {
-          const response = await fetch('/api/updateProfilePic', {
+          setProfilePic(reader.result);
+          localStorage.setItem('profilePic', reader.result);
+
+          const response = await fetch('http://localhost:4000/api/updateProfilePic', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               profilePic: reader.result,
-              username: 'exampleUsername', // Replace with actual username
+              username: 'exampleUsername',
             }),
           });
-  
+
           if (response.ok) {
             const data = await response.json();
             console.log('Profile picture updated:', data);
-            setProfilePic(reader.result); // Update UI with the new picture
           } else {
-            console.error('Failed to update profile picture');
+            const errorData = await response.json();
+            console.error('Failed to update profile picture:', errorData.message);
           }
         } catch (error) {
           console.error('Error updating profile picture:', error);
@@ -89,16 +97,14 @@ const Profile = (props) => {
       reader.readAsDataURL(file);
     }
   };
-  
-  // Check if user is logged in
+
   useEffect(() => {
     if (token === null) {
       props.setprofile(null);
       props.goSignUp();
     }
-  }, []); // Empty dependency array ensures it runs once
+  }, []);
 
-  // Logout handler
   const navigate = useNavigate();
   const logoutHandle = () => {
     localStorage.removeItem('token');
@@ -109,6 +115,7 @@ const Profile = (props) => {
 
   return (
     <div className="profile">
+      <Toast message={toast.message} type={toast.type} onClose={closeToast} />
       <div className="logout">
         <p className="shopName">My Profile</p>
         <button onClick={logoutHandle}>Logout</button>

@@ -2,8 +2,17 @@ import React, { useState } from 'react';
 import './SignUp.css';
 import delivery from './assets/delivery.png';
 import axios from 'axios';
+import Toast from './Toast';
 
 const SignUp = (props) => {
+    const [toast, setToast] = useState({ message: "", type: "" });
+    const showToast = (message, type) => {
+        setToast({ message, type });
+    };
+    const closeToast = () => {
+        setToast({ message: "", type: "" });
+    };
+
     const [user, setUser] = useState({
         name: '',
         username: '',
@@ -26,20 +35,31 @@ const SignUp = (props) => {
         console.log(user);
         try {
             const response = await axios.post("http://localhost:4000/signup", user);
-            if(response.data.status!=="exists"){
-                window.alert("Sign Up successful!");
+            if (response.data.status !== "exists") {
+                showToast("Sign Up successful!", 'success');
                 props.goLogin();
-            }else{
-                window.alert("Account already exists with this email.")
+            } else {
+                showToast("Account already exists with this email.", 'error')
             }
         } catch (error) {
             console.log(error);
-            window.alert("Some error occured.");
+            showToast("Failed to create account. Try again.", 'error');
         }
     };
+    // const showFloatingMessage = (message) => {
+    //     const messageElement = document.createElement('div');
+    //     messageElement.textContent = message;
+    //     messageElement.classList.add('floating-message');
+    //     document.body.appendChild(messageElement);
+
+    //     setTimeout(() => {
+    //         document.body.removeChild(messageElement);
+    //     }, 3000); // Remove after 3 seconds
+    // };
 
     return (
         <div className='signUpContainer'>
+            <Toast message={toast.message} type={toast.type} onClose={closeToast} />
             <div className="left"><p>BECOME A PROUD MEMBER OF OUR GADGET FAMILY</p></div>
             <div className="signUp">
                 <p><b>Sign Up Form</b></p>

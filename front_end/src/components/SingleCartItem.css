@@ -25,9 +25,15 @@
     height: 30px;
     border-radius: 5px;
     border: none;
-    background: linear-gradient(45deg, #f6a2bd, #1D2671);
+    /* background: linear-gradient(45deg, #f6a2bd, #1D2671); */
     cursor: pointer;
     font-size: 18px;
+}
+.desc-btn .buy{
+    background-color: rgb(117, 117, 247);
+}
+.desc-btn .remove{
+    background-color: rgb(253, 81, 81);
 }
 .desc-btn button:hover{
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);

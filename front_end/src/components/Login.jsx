@@ -24,21 +24,32 @@ const Login = (props) => {
         try{
             const response = await axios.post("http://localhost:4000/signup/login", user)
             if(response.data.token){
-                window.alert("Successfully logged in!");
+                showFloatingMessage("Successfully logged in!");
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('currentuserid', response.data.userid);
                 navigate('/')
                 // props.goProfile();
             }
             if(response.data.status==="null"){
-                window.alert("No such account.");
+                showFloatingMessage("No such account.")
             }else if(response.data.status==="incorrect"){
-                window.alert("Incorrect password.");
+                showFloatingMessage("Incorrect password.");
             }
         }catch(error){
-            window.alert("Some error occured.")
+            showFloatingMessage("Login failed. Please try again")
         }
     }
+    const showFloatingMessage = (message) => {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageElement.classList.add('floating-message');
+        document.body.appendChild(messageElement);
+      
+        setTimeout(() => {
+          document.body.removeChild(messageElement);
+        }, 3000); // Remove after 3 seconds
+      };
+
 
     return (
         <div className='loginContainer'>
