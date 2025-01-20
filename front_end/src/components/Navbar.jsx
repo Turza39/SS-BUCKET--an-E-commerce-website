@@ -28,12 +28,12 @@ const Navbar = () => {
               setCartCount(totalItems); // Update the cart count with the total number of items
           } catch (error) {
               console.error('Error fetching cart items:', error.response ? error.response.data : error.message);
-              setCartCount(0); // Default to 0 if there's an error
+            //   setCartCount(0); // Default to 0 if there's an error
           }
       };
   
       fetchCartItems();
-  }, [userId]);
+  }, [userId, cartCount]);
 
     return (
         <div className='navbar'>
@@ -65,7 +65,7 @@ const Navbar = () => {
                     {/* <li onClick={() => { setMenu("sales"); }}>
                         <Link style={{ textDecoration: 'none' }} to='/sales'><b>Big Sales</b></Link>
                         {menu === "sales" && <hr />}
-                    </li> */}
+                    </li> */} 
                 </ul>
             </div>
             <div className="cart-profile">

@@ -5,8 +5,18 @@ import star_icon from "../components/assets/star_icon.png";
 import axios from 'axios';
 import { Link } from 'react-scroll';
 import Summary from '../components/Summary.jsx';
+import Toast from '../components/Toast';
+
 
 const ProductDetails = () => {
+    const [toast, setToast] = useState({ message: "", type: "" });
+    const showToast = (message, type) => {
+      setToast({ message, type });
+    };
+    const closeToast = () => {
+      setToast({ message: "", type: "" });
+    };
+
   const [quantity, setQuantity] = useState(1);
   const [order, setOrder] = useState({});
   const [cart, setCart] = useState({});
@@ -30,16 +40,12 @@ const ProductDetails = () => {
         }
 
         const [userResponse, deliveryResponse] = await Promise.all([
-          axios.get('http://localhost:4000/user/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
+          axios.get(`http://localhost:4000/user/profile/${userId}`),
           axios.get(`http://localhost:4000/getDeliveryInfo/${userId}`),
         ]);
 
-        setUser(userResponse.data.profile); // Store user profile data
-        setDeliveryInfo(deliveryResponse.data); // Store delivery information
+        setUser(userResponse.data); 
+        setDeliveryInfo(deliveryResponse.data); 
       } catch (error) {
         console.error('Error fetching user or delivery info:', error);
       }
@@ -68,13 +74,12 @@ const ProductDetails = () => {
     }, 3000); // Remove after 3 seconds
   };
 
-  // Handle adding the item to the cart
   const cartHandle = async () => {
     if (!user || !deliveryInfo) {
       alert('User or delivery information not found.');
       return;
     }
-
+  
     try {
       const newCart = {
         brand: decodedItem.brand,
@@ -88,18 +93,18 @@ const ProductDetails = () => {
         clientId: user._id,
         clientName: user.name,
       };
-
-      // Use newCart directly for the API call
-      console.log(newCart)
+  
+      console.log(newCart); // Debugging purposes
       const response = await axios.post('http://localhost:4000/cart', newCart);
-      console.log(response.data);
-
-      showFloatingMessage('Product added to your cart list successfully!');
+  
+      showToast("Product added successfully!", 'success');
     } catch (error) {
-      console.error('Error adding to cart:', error.response?.data || error.message);
-      showFloatingMessage('Failed to add product to cart. Please try again.');
+      const errorMessage =
+      error.response?.data?.message || 'Failed to add product to cart. Please try again.';
+      showToast(errorMessage, 'error');
     }
   };
+  
 
   // Handle the "Buy Now" functionality
   const orderHandle = async () => {
@@ -132,6 +137,7 @@ const ProductDetails = () => {
 
   return (
     <div>
+      <Toast message={toast.message} type={toast.type} onClose={closeToast} />
       <div className='productDisplay'>
         <div className="productDisplay-left">
           <div className="productDisplay-left-img-list">

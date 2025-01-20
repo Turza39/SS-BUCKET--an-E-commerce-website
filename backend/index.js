@@ -56,13 +56,14 @@ app.post('/addadmin', async (req, res) => {
 
         if (!admin) {
             // Create a new admin if none exists
-            const hashedPassword = await bcrypt.hash(password, 10);
+            // const hashedPassword = await bcrypt.hash(password, 10);
             const newAdmin = new Admin({
                 name,
                 image,
                 email,
                 bankAccountNo,
-                password: hashedPassword,
+                // password: hashedPassword,
+                password
             });
 
             await newAdmin.save();
@@ -70,16 +71,21 @@ app.post('/addadmin', async (req, res) => {
         }
 
         // For updating the existing admin
-        const isPasswordCorrect = await bcrypt.compare(currentPassword, admin.password);
-        if (!isPasswordCorrect) {
-            return res.status(401).json({ message: 'Current password is incorrect.' });
-        }
+        // const isPasswordCorrect = await bcrypt.compare(currentPassword, admin.password);
+        // console.log(admin);
+        // if (currentPassword != admin?.password) {
+        //     return res.status(401).json({ message: 'Current password is incorrect.' });
+        // }
+        // if (!isPasswordCorrect) {
+        //     return res.status(401).json({ message: 'Current password is incorrect.' });
+        // }
 
         if (name) admin.name = name;
         if (image) admin.image = image;
         if (email) admin.email = email;
         if (bankAccountNo) admin.bankAccountNo = bankAccountNo;
-        if (password) admin.password = await bcrypt.hash(password, 10);
+        if (password) admin.password = password;
+        // if (password) admin.password = await bcrypt.hash(password, 10);
 
         await admin.save();
         res.status(200).json({ message: 'Admin updated successfully.', admin });
@@ -127,7 +133,7 @@ const userSchema = mongoose.Schema({
     name: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
-    address: { type: String, requied: true },
+    address: { type: String, required: true },
     email: { type: String, required: false },
     phone: { type: String, required: true },
     cart: { type: [ProductSchema], required: false, default: null },
@@ -192,14 +198,19 @@ app.post('/signup/login', async (req, res) => {
     }
 })
 
-// api for profile 
-app.get('/user/profile', authenticateToken, async (req, res) => {
-    const user = await users.findOne({ userid: req.user.userid });
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+
+app.get("/user/profile/:id", async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
     }
-    console.log(user)
-    res.json({ profile: user });
 });
 
 

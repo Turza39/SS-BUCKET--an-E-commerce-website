@@ -11,7 +11,7 @@ const Summary = (props) => {
   };
   const closeToast = () => {
     setToast({ message: "", type: "" });
-  };
+  }; 
 
   const [deliveryInfo, setDeliveryInfo] = useState('');
   const [secretKey, setSecretKey] = useState('');
@@ -46,7 +46,7 @@ const Summary = (props) => {
   // Place order function with secret key validation and fund transfer
   const placeOrder = async () => {
     if (!deliveryInfo || secretKey !== deliveryInfo.secretKey) {
-      setErrorMessage('Invalid secret key. Please try again.');
+      // setErrorMessage('Invalid secret key. Please try again.');
       showToast('Invalid secret key. Please try again.', 'error');
       return;
     }

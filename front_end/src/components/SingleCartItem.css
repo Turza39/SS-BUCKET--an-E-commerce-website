@@ -8,6 +8,14 @@
     margin: 4px;
     cursor: pointer;
 }
+.cartItem img {
+    height: 120px; /* Fixed height */
+    width: 120px;  /* Fixed width */
+    object-fit: cover; /* Ensures the image scales properly while maintaining aspect ratio */
+    border-radius: 5px; /* Optional: adds rounded corners to the image */
+    border: 1px solid #ddd; /* Optional: adds a light border for better visuals */
+}
+
 .cartItem:hover{
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
 }

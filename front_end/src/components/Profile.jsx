@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import './Profile.css';
 import user from './assets/user.png';
 import { useNavigate } from 'react-router-dom';
 import Toast from './Toast';
+import axios from 'axios'
 
-const token = localStorage.getItem('token');
-const userId = localStorage.getItem('currentuserid');
 
 const Profile = (props) => {
   const [toast, setToast] = useState({ message: "", type: "" });
@@ -16,6 +15,32 @@ const Profile = (props) => {
     setToast({ message: "", type: "" });
   };
 
+  const [profile, setprofile] = useState("")
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('currentuserid');
+
+  useEffect(() => {
+      fetchProfile();
+  }, [token]);
+  
+  const fetchProfile = async () => {
+      if (token) {
+          try {
+              const response = await axios.get(`http://localhost:4000/user/profile/${userId}`);
+              if (response.data) {
+                  setprofile(response.data); 
+              } else {
+                  console.log("Failed to fetch profile.");
+              }
+          } catch (error) {
+              console.error("Error fetching profile:", error);
+          }
+      } else {
+          props.goSignUp();
+      }
+  };
+  
+
   const [profilePic, setProfilePic] = useState(localStorage.getItem('profilePic') || '');
   const [deliveryInfo, setDeliveryInfo] = useState({
     address: '',
@@ -23,7 +48,7 @@ const Profile = (props) => {
     bankAccount: '',
     cvc: '',
     secretKey: '',
-  });
+  }); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,18 +123,19 @@ const Profile = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (token === null) {
-      props.setprofile(null);
-      props.goSignUp();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (token === null) {
+  //     props.setprofile(null);
+  //     props.goSignUp();
+  //   }
+  // }, []);
 
   const navigate = useNavigate();
   const logoutHandle = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('currentuserid');
     console.log('Logged out');
+    showToast("Logged out successfully.", 'success');
     navigate('/');
   };
 
@@ -135,8 +161,8 @@ const Profile = (props) => {
           />
         </div>
         <div className="names">
-          <p>{props.profile.name}</p>
-          <p>@{props.profile.username}</p>
+          <p>{profile.name}</p>
+          <p>@{profile.username}</p>
         </div>
       </div>
       <form className="delivery-info" onSubmit={handleFormSubmit}>

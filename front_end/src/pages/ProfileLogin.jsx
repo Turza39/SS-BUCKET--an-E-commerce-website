@@ -8,17 +8,14 @@ import axios from 'axios'
 const ProfileLogin = () => {
   const [profile, setprofile] = useState(null)
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('currentuserid')
   useEffect(() => {
     fetchProfile();
   }, [token]);
   const fetchProfile = async () => {
     if (token !== null) {
       try {
-        const response = await axios.get('http://localhost:4000/user/profile', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const response = await axios.get(`http://localhost:4000/user/profile/${userId}`);
         if (response.data) {
           setprofile(response.data.profile);
           setshowProfile(true);
